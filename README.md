@@ -97,9 +97,13 @@ Subsequently, the simulated radiance spectra are convolved with the PRISMA spect
 
 <div align="center">
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/160778eb-f03e-477b-83be-0ce0200c0bbb" width="70%">
+ 
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/d471e0b0-3343-4c26-a5ef-7cb7f16bfa4d" width="70%">
 </div>
 
+<div align="center">
+<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/87a5817e-41c2-4d25-9496-8b8e5d2e71fe" width="40%">
+</div>
 
 ### References
 
@@ -109,6 +113,7 @@ Subsequently, the simulated radiance spectra are convolved with the PRISMA spect
 [2] Myhre et al., "Anthropogenic and natural radiative forcing," in Climate Change 2013—The Physical Science Basis Working Group I Contribution to the Fifth Assessment Report of the Intergovernmental Panel on Climate Change. Cambridge: Cambridge, U.K.: Cambridge Univ. Press, 2014, pp. 659–740, doi: 10.1017/CBO9781107415324.018.  
 
 [3] Foote, Markus D., et al. "Fast and accurate retrieval of methane concentration from imaging spectrometer data using sparsity prior." IEEE Transactions on Geoscience and Remote Sensing 58.9 (2020): 6480-6492.  
+
 [4] Foote, Markus D., et al. "Impact of scene-specific enhancement spectra on matched filter greenhouse gas retrievals from imaging spectroscopy." Remote Sensing of Environment 264 (2021): 112574.  
 
 [5] Ayasse, Alana K., et al. "Methane mapping with future satellite imaging spectrometers." Remote Sensing 11.24 (2019): 3054. 
