@@ -8,7 +8,7 @@ The methodology, originally developed for the CLEAR-UP project funded by ASI, le
 
 **Citation:**
 
-- Ferrari, A., Laneve, G., Pampanoni, V., Carvajal, A., Rossi, F. (2024, July). Monitoring Methane Emissions from Landfills Using PRISMA Imagery. In IGARSS 2024-2024 IEEE International Geoscience and Remote Sensing Symposium (soon to be published). IEEE. (GitHub code repository available here)
+- Ferrari, A., Laneve, G., Pampanoni, V., Carvajal, A., Rossi, F., Guarini, R. (2024, July). Monitoring Methane Emissions from Landfills Using PRISMA Imagery. In IGARSS 2024-2024 IEEE International Geoscience and Remote Sensing Symposium (soon to be published). IEEE. (GitHub code repository available here)
 
 **Links:**
 
