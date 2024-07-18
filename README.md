@@ -6,6 +6,13 @@ This repository contains the code and resources for detecting and quantifying me
 
 The methodology, originally developed for the CLEAR-UP project funded by ASI, leverages the PRISMA Hyperspectral sensor to monitor methane emissions using an enhanced matched filter technique known as the Cluster Tuned Matched Filter (CTMF). This is applied to L1C radiance images. The unit absorption spectrum, obtained using multiple MODTRAN6® simulations, serves as the target in the matched filter, enabling methane detection and quantification. Key steps include utilizing PRISMA L1C radiance images in the 2300 nm short-wave infrared methane absorption window, adapting the matched filter to account for background clutter, and applying clustering for refined background spectrum calculations. Methane concentration is estimated by linearizing the Beer-Lambert absorption law and using the unit absorption spectrum, which represents the unit methane absorption as a function of wavelength. Automation through a lookup table (LUT) based on precomputed radiances for various conditions enables real-time applicability. Results computed over 200 PRISMA acquisitions revealed methane plumes at various sites of interest in countries including Algeria, Argentina, Brazil, China, India, Mexico, Turkmenistan, and the USA. For instance, the Natural Gas compression plant in Kamyshlydzha, Turkmenistan, consistently exhibited methane plumes across all 13 images analyzed. Several large landfills were examined using available PRISMA images or through specific acquisition requests. Evidence of methane concentration enhancement was observed in the Buenos Aires landfill and the Pirana landfill in Ahmedabad.
 
+<div align="center">
+<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/87a5817e-41c2-4d25-9496-8b8e5d2e71fe" width="20%">
+</div>
+
+**Author:** Alvise Ferrari 
+**Contact:** alvise.ferrari@uniroma1.it, ferrarialvise@gmail.com
+
 **Citation:**
 
 - Ferrari, A., Laneve, G., Pampanoni, V., Carvajal, A., Rossi, F., Guarini, R. (2024, July). Monitoring Methane Emissions from Landfills Using PRISMA Imagery. In IGARSS 2024-2024 IEEE International Geoscience and Remote Sensing Symposium (soon to be published). IEEE. (GitHub code repository available here)
@@ -17,11 +24,30 @@ The methodology, originally developed for the CLEAR-UP project funded by ASI, le
 - [DEM](https://drive.google.com/file/d/10e1VtibryVxcHT4-Gb0ryhyk17JCF04f/view?usp=sharing)
 - [PRISMA Sample Images](https://drive.google.com/drive/folders/1IqJE_szLeWtHDRRdjURAl2JIBeQL_9zy?usp=sharing)
 
-## Methodology
 
-<div align="center">
-<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/631d12fe-f2eb-424c-9e27-da3ace35469a" width="70%">
-</div>
+## Index
+
+1. **Methodology**
+   - 1.1 Dataset Preparation with GEE
+   - 1.2 Binarization of Multitemporal Canny Mask
+   - 1.3 Splitting Training Dataset into Sub-Tiles
+  
+   - 
+User Manual for CTMF v4.6 Docker Container
+Provided Files
+Docker Container Usage
+Example Docker Run Commands
+Input Definition
+Output Definition
+Future Updates
+References
+
+## 1. **Algorithm Theoretical Basis**
+
+
+
+
+## 1.1 Clutter Matched Filter
 
 In the SWIR spectrum, the absorption windows of methane are centered about 1700 nm and 2300 nm. The radiance measured by a hyperspectral sensor is modeled as a superposition of signal $\( b \)$, scaled by its strength $\( \alpha \)$, an average background radiance $\( L_{\text{mean}} \)$ (averaged over the entire image), and a zero-mean noise or clutter term $\( \epsilon \)$ [12][19].
 
@@ -71,7 +97,7 @@ $`L_{\text{no\_pl}} = L_{\text{mean},j}`$
 
 </div>
 
-### Methane Concentration Estimation
+### 1.2 Concentration Estimation
 
 The impact of methane enhancement is described by the Beer-Lambert absorption law; linearization of the Beer-Lambert law using a first-order Taylor series approximation allows for the formulation of a linear inversion problem to estimate methane concentration:
 
@@ -89,23 +115,92 @@ $`d_j = -A \left(1 + \frac{1}{\cos \theta}\right) L_{\text{mean},j}`$
 
 Where $\( \theta \)$ is the solar zenith angle, $\( A \)$ is the absorption coefficient at the instrument's wavelengths, representing the specific absorption of methane. The linear estimation method allows calculating the concentration of the gas based on the difference between the observed radiance $\( L_{(x_i,y_i)} \)$ and the mean radiance $\( L_{\text{mean},j} \)$. This approach is consistent with the methodology outlined in previous studies [11] and allows calculating the concentration of the gas as the CTMF score $\( \alpha_j \)$ divided by the optimal filter applied to the target signal $\( (q_j \cdot b_j) \)$.
 
-### Scene-Specific Target Spectrum Automatic Generation
+### 1.3 Scene-Specific Target Spectrum Automatic Generation
 
 The unit absorption spectrum is derived from multiple simulations with varying methane gas concentrations using radiative transfer models such as MODTRAN6®. This spectrum represents the methane absorption as a function of wavelength, normalized per unit path length and concentration. The unit for this measurement is typically $(ppm·m)\(^{-1}\)$, indicating the inverse of the product of methane concentration (in parts per million) and the path length (in meters) over which the absorption occurs.
 
 Subsequently, the simulated radiance spectra are convolved with the PRISMA spectral response function, and a regression analysis is carried out to obtain the unit absorption spectrum for each PRISMA spectral channel. The slope of the regression line, which best represents the relationship between the concentration-path product and the natural logarithm of the radiance, provides the unit absorption value for each specific wavelength band. This unit absorption spectrum is scaled by element-wise multiplication with the average radiance at each wavelength to generate the target spectrum, which is then used in the matched filter. To automate the generation of the unit target spectrum and make it independent of real-time MODTRAN6® runs, a lookup table (LUT) has been developed based on the methodology described by Foote et al. (2020) [4]. This LUT contains precomputed at-sensor radiances for a wide range of atmospheric and geometric parameters, including variations in sensor altitude, water vapor content, ground elevation, sun zenith angle, and methane concentration. For each PRISMA acquisition, the Level 2C PRISMA image is also used to read the water vapor content, and a Digital Elevation Model (DEM) is used to read the ground elevation. By interpolating within the LUT, it is possible to quickly generate a unit target spectrum that accurately matches the conditions of a given satellite pass.
 
 <div align="center">
-<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/160778eb-f03e-477b-83be-0ce0200c0bbb" width="70%">
- 
-<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/d471e0b0-3343-4c26-a5ef-7cb7f16bfa4d" width="70%">
-</div>
+<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/160778eb-f03e-477b-83be-0ce0200c0bbb" width="50%">
+
+
+
+## 1.4 Processing Flow Chart
 
 <div align="center">
-<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/87a5817e-41c2-4d25-9496-8b8e5d2e71fe" width="40%">
+<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/631d12fe-f2eb-424c-9e27-da3ace35469a" width="60%">
 </div>
 
-### References
+## 1.4 Examples of Automatically Generated Outputs
+
+<img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/d471e0b0-3343-4c26-a5ef-7cb7f16bfa4d" width="50%">
+</div>
+
+
+
+
+##  2. **User Manual for CTMF v4.6 Docker Container**
+
+### 2.1 Provided Files:
+
+- `ctmf_v4_6.tar` (Docker image)
+- `dataset_ch4_full.hdf5`
+- `srtm30plus_v11_land.nc`
+- Collection of 400+ PRISMA L1 and L2C images in areas with potential CH4 emitters
+- Python script `ctmf_docker_run_wsl.py` for using Docker on Windows
+- Python script `ctmf_docker_run_win.py` for using Docker on WSL 2 (Ubuntu LTS-20.04)
+
+All files can be found at this link, navigating to the folder `2.Rilevamento CH4`.
+
+### 2.2 Docker Container Usage
+
+The Docker container can be used on any operating system without compatibility issues with the necessary libraries, as the entire operating system, Python, and various dependencies are contained within the Docker image `ctmf_v4_6.tar`. The only difference will be in the definition of file paths I/O if used on Windows or Linux. Automatic processing of many images can be easily automated.
+
+- The Python script `ctmf_docker_run_win.py` shows how to run the container in a Python virtual environment installed on Windows.
+- The Python script `ctmf_docker_run_wsl.py` shows an example of running the container on a Linux kernel installed with WSL-2.
+
+### 2.3 Example Docker Run Commands
+
+#### 2.3.1 WSL2 (Linux Kernel on Windows)
+
+```bash
+docker run --rm -v /mnt/c/Users/yourusername/input:/input -v /mnt/c/Users/yourusername/output:/output ctmf_v4_6 \
+    python /ctmf_docker_run_wsl.py --L1C_file /input/PRISMA_L1.he5 --L2C_file /input/PRISMA_L2C.he5 \
+    --dem_file /input/srtm30plus_v11_land.nc --lut_file /input/dataset_ch4_full.hdf5 --output_dir /output
+```
+
+#### 2.3.2 Windows
+
+```bash
+docker run --rm -v C:\Users\yourusername\input:/input -v C:\Users\yourusername\output:/output ctmf_v4_6 \
+    python /ctmf_docker_run_win.py --L1C_file /input/PRISMA_L1.he5 --L2C_file /input/PRISMA_L2C.he5 \
+    --dem_file /input/srtm30plus_v11_land.nc --lut_file /input/dataset_ch4_full.hdf5 --output_dir /output
+```
+
+### 2.3.4 Input Definition
+
+- **L1C_file:** Path to the PRISMA L1 file in original format *.he5, as extracted from the zip provided by ASI.
+- **L2C_file:** Path to the PRISMA L2C file in original format *.he5, as extracted from the zip provided by ASI.
+- **dem_file:** Path to the `srtm30plus_v11_land.nc` file, as provided by EOSIAL.
+- **lut_file:** Path to the `dataset_ch4_full.hdf5` file, as provided by EOSIAL.
+- **output_dir:** Path to the directory where you want to save the outputs.
+
+### 2.3.5 Output Definition
+
+The output files generated by the software are as follows:
+
+- `PRS_L1_STD_OFFL_XXXXXXXXXXXXXX_XXXXXXXXXXXXXX_0001_rgb.tif`: RGB image of the PRISMA L1 scene
+- `PRS_L1_STD_OFFL_XXXXXXXXXXXXXX_XXXXXXXXXXXXXX_0001_classified.tif`: Unsupervised classification image of the scene (k-means)
+- `PRS_L1_STD_OFFL_XXXXXXXXXXXXXX_XXXXXXXXXXXXXX_0001_MF.tif`: Matched filter score image, derived from the PRISMA L1 image, indicating the probability of methane presence.
+- `PRS_L1_STD_OFFL_XXXXXXXXXXXXXX_XXXXXXXXXXXXXX_0001_MF_concentration.tif`: CH4 concentration map in physical units [ppm∙m]. This corresponds to the CLEAR-UP product 'PRISMA_L1_CH4enhancement' as defined in the official project documentation.
+
+### 2.3.6 Future Updates
+
+Future versions of the script will not require the use of additional input files for generating the 'PRISMA_L1_CH4enhancement' product. It is planned to use a Sentinel-2 image to coregister the final 'PRISMA_L2_CH4enhancement' product, which will be automatically downloaded unless explicitly provided as an additional input. All future released versions will have the same usage structure. Simply download the updated Docker image, without modifying the integration of the Docker within the automatic product generation system or through UI and web apps.
+
+
+### 3. References
 
 <small>
 [1] Saunois et al., "The global methane budget 2000–2012," Earth Syst. Sci. Data, vol. 8, no. 2, pp. 697–751, Dec. 2016, doi: 10.5194/essd-8-697-2016.  
