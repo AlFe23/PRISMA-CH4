@@ -27,27 +27,26 @@ The methodology, originally developed for the CLEAR-UP project funded by ASI, le
 
 ## Index
 
-1. **Methodology**
-   - 1.1 Dataset Preparation with GEE
-   - 1.2 Binarization of Multitemporal Canny Mask
-   - 1.3 Splitting Training Dataset into Sub-Tiles
-  
-   - 
-User Manual for CTMF v4.6 Docker Container
-Provided Files
-Docker Container Usage
-Example Docker Run Commands
-Input Definition
-Output Definition
-Future Updates
-References
+1. **Algorithm Theoretical Basis**
+   - 1.1 Clutter Matched Filter
+   - 1.2 Concentration Estimation
+   - 1.3 Scene-Specific Target Spectrum Automatic Generation
+   - 1.4 Processing Flow Chart
+   - 1.5 Examples of Automatically Generated Outputs
+2. **User Manual for CTMF v4.6 Docker Container**
+   - 2.1 Provided Files
+   - 2.2 Docker Container Usage
+   - 2.3 Example Docker Run Commands
+     - 2.3.1 WSL2 (Linux Kernel on Windows)
+     - 2.3.2 Windows
+   - 2.4 Input Definition
+   - 2.5 Output Definition
+   - 2.6 Future Updates
+3. **References**
 
 ## 1. **Algorithm Theoretical Basis**
 
-
-
-
-## 1.1 Clutter Matched Filter
+### 1.1 Clutter Matched Filter
 
 In the SWIR spectrum, the absorption windows of methane are centered about 1700 nm and 2300 nm. The radiance measured by a hyperspectral sensor is modeled as a superposition of signal $\( b \)$, scaled by its strength $\( \alpha \)$, an average background radiance $\( L_{\text{mean}} \)$ (averaged over the entire image), and a zero-mean noise or clutter term $\( \epsilon \)$ [12][19].
 
@@ -62,7 +61,7 @@ $\( \epsilon \)$ represents both sensor noise and scene clutter (non-desirable c
 **Clutter Matched Filter (CMF):**
 
 <div align="center">
-
+ 
 $`q = \frac{C^{-1} b}{\sqrt{b^T C^{-1} b}}`$
 
 </div>
@@ -74,6 +73,8 @@ Here, $\( q \)$ is normalized to ensure that in the absence of signal, the varia
 $`C \approx \frac{1}{N} \sum_{i=1}^N (L_i - L_{\text{mean}})(L_i - L_{\text{mean}})^T`$
 
 </div>
+
+**Cluster Tuned Matched Filter (CTMF):**
 
 The CTMF [12], performs image clustering before applying the matched filter [14][15][16][17][18]. The average background spectrum and covariance matrix are calculated for each class. The CTMF score for the pixel $\((x,y)\)$ in the j-th class is given by:
 
@@ -123,17 +124,20 @@ Subsequently, the simulated radiance spectra are convolved with the PRISMA spect
 
 <div align="center">
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/160778eb-f03e-477b-83be-0ce0200c0bbb" width="50%">
+</div>
 
 
+### 1.4 Processing Flow Chart
 
-## 1.4 Processing Flow Chart
+Below a figure reporting the processing workflow implemented:
 
 <div align="center">
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/631d12fe-f2eb-424c-9e27-da3ace35469a" width="60%">
 </div>
 
-## 1.4 Examples of Automatically Generated Outputs
+### 1.5 Examples of Automatically Generated Outputs
 
+<div align="center">
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/d471e0b0-3343-4c26-a5ef-7cb7f16bfa4d" width="50%">
 </div>
 
