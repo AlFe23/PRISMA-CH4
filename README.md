@@ -98,23 +98,36 @@ $`L_{\text{no\_pl}} = L_{\text{mean},j}`$
 
 </div>
 
-### 1.2 Concentration Estimation
+### 1.2 Concentration Estimation (v2)
 
-The impact of methane enhancement is described by the Beer-Lambert absorption law; linearization of the Beer-Lambert law using a first-order Taylor series approximation allows for the formulation of a linear inversion problem to estimate methane concentration:
+The methane column enhancement $`\Delta X_{\mathrm{CH}_4}`$ (in ppm·m) is obtained by linearizing the Beer–Lambert law for optically thin plumes ($`\tau \lesssim 0.05`$) and applying a maximum-likelihood matched filter:
 
 <div align="center">
-  
-$`\rho_{LM} = \frac{(L_{(x,y)_j} - L_{\text{mean}_j}) d_j^T C_j^{-1}}{d_j^T C_j^{-1} d_j}`$
+
+$`\Delta X_{\mathrm{CH}_4}(x,y) =
+\frac{(L_{(x,y)} - \mu)^\top\,\Sigma^{-1}\,t}
+     {t^\top\,\Sigma^{-1}\,t}`$
 
 </div>
 
 <div align="center">
-  
-$`d_j = -A \left(1 + \frac{1}{\cos \theta}\right) L_{\text{mean},j}`$
+
+$`t = -A \bigl(1 + \sec\theta\bigr)\,\mu`$
 
 </div>
 
-Where $\( \theta \)$ is the solar zenith angle, $\( A \)$ is the absorption coefficient at the instrument's wavelengths, representing the specific absorption of methane. The linear estimation method allows calculating the concentration of the gas based on the difference between the observed radiance $\( L_{(x_i,y_i)} \)$ and the mean radiance $\( L_{\text{mean},j} \)$. This approach is consistent with the methodology outlined in previous studies [11] and allows calculating the concentration of the gas as the CTMF score $\( \alpha_j \)$ divided by the optimal filter applied to the target signal $\( (q_j \cdot b_j) \)$.
+where  
+* **$`L_{(x,y)}`$** is the at-sensor radiance vector,  
+* **$`\mu, \Sigma`$** are the background mean and covariance (global or per-cluster),  
+* **$`t`$** is the unit-target spectrum ($`\mathrm{radiance}\cdot(\mathrm{ppm}\,\mathrm{m})^{-1}`$) from LUT/MODTRAN,  
+* **$`A`$** is the scene-specific $`\mathrm{CH}_4`$ absorption coefficient,  
+* **$`\theta`$** is the solar zenith angle.  
+
+Because $`\Sigma^{-1}`$ appears in both numerator and denominator, the result is already in physical units (ppm·m) without empirical scaling.  
+
+Use `--n_clusters k` to tune $`\mu`$, $`\Sigma`$ and $`t`$ per cluster for improved SNR on heterogeneous scenes.  
+
+
 
 ### 1.3 Scene-Specific Target Spectrum Automatic Generation
 
@@ -148,39 +161,109 @@ Below a figure reporting the processing workflow implemented:
 
 ### 2.1 Provided Files:
 
-- `ctmf_v4_6.tar` (Docker image)
+- `prisma-ch4-mapper.tar` (Docker image)
 - `dataset_ch4_full.hdf5`
 - `srtm30plus_v11_land.nc`
-- Collection of 400+ PRISMA L1 and L2C images in areas with potential CH4 emitters
-- Python script `ctmf_docker_run_wsl.py` for using Docker on Windows
-- Python script `ctmf_docker_run_win.py` for using Docker on WSL 2 (Ubuntu LTS-20.04)
+- sample PRISMA L1 and L2C images in areas with potential CH4 emitters
+- Python script `run_ctmf_prisma.py` for ease the docker container use
+
 
 All files can be found at this link, navigating to the folder `2.Rilevamento CH4`.
 
 ### 2.2 Docker Container Usage
 
-The Docker container can be used on any operating system without compatibility issues with the necessary libraries, as the entire operating system, Python, and various dependencies are contained within the Docker image `ctmf_v4_6.tar`. The only difference will be in the definition of file paths I/O if used on Windows or Linux. Automatic processing of many images can be easily automated.
+The Docker image (`prisma-ch4-mapper.tar`) now supports two modes of operation:
 
-- The Python script `ctmf_docker_run_win.py` shows how to run the container in a Python virtual environment installed on Windows.
-- The Python script `ctmf_docker_run_wsl.py` shows an example of running the container on a Linux kernel installed with WSL-2.
+- **Single mode**: process one acquisition at a time by supplying the paths to the extracted `.he5` L1C and L2C files.  
+- **Batch mode**: process a directory tree of PRISMA acquisitions (each in its own folder, either zipped or already extracted) in one go.
+
+You can drive the container either via the helper script `run_ctmf_prisma.py` (recommended) or with plain `docker` commands.
+
+---
 
 ### 2.3 Example Docker Run Commands
 
-#### 2.3.1 WSL2 (Linux Kernel on Windows)
+#### 2.3.1 Using `run_ctmf_prisma.py`
+
+> **Note:** place `prisma-ch4-mapper.tar` in the same folder as `run_ctmf_prisma.py`.
+
+##### Single mode
 
 ```bash
-docker run --rm -v /mnt/c/Users/yourusername/input:/input -v /mnt/c/Users/yourusername/output:/output ctmf_v4_6 \
-    python /ctmf_docker_run_wsl.py --L1C_file /input/PRISMA_L1.he5 --L2C_file /input/PRISMA_L2C.he5 \
-    --dem_file /input/srtm30plus_v11_land.nc --lut_file /input/dataset_ch4_full.hdf5 --output_dir /output
+python3 run_ctmf_prisma.py \
+  -t prisma-ch4-mapper.tar \
+  single \
+    /path/to/PRS_L1_STD_OFFL_xxx.he5 \
+    /path/to/PRS_L2C_STD_xxx.he5 \
+    /path/to/srtm30plus_v11_land.nc \
+    /path/to/dataset_ch4_full.hdf5 \
+    /path/to/output/folder \
+    -k 1 --min_wl 2100 --max_wl 2450
 ```
 
-#### 2.3.2 Windows
+##### Batch mode
 
 ```bash
-docker run --rm -v C:\Users\yourusername\input:/input -v C:\Users\yourusername\output:/output ctmf_v4_6 \
-    python /ctmf_docker_run_win.py --L1C_file /input/PRISMA_L1.he5 --L2C_file /input/PRISMA_L2C.he5 \
-    --dem_file /input/srtm30plus_v11_land.nc --lut_file /input/dataset_ch4_full.hdf5 --output_dir /output
+python3 run_ctmf_prisma.py \
+  -t prisma-ch4-mapper.tar \
+  batch \
+    /path/to/parent_directory_of_acquisitions \
+    /path/to/srtm30plus_v11_land.nc \
+    /path/to/dataset_ch4_full.hdf5 \
+    --output_root /path/to/output/folder \
+    -k 1 --min_wl 2100 --max_wl 2450
 ```
+
+---
+
+#### 2.3.2 Using plain Docker
+
+First load the image:
+
+```bash
+docker load -i prisma-ch4-mapper.tar
+```
+
+##### Single mode
+
+```bash
+docker run --rm \
+  -v /host/path/to/data:/data \
+  prisma-ch4-mapper:latest single \
+    "/data/PRS_L1_STD_OFFL_xxx.he5" \
+    "/data/PRS_L2C_STD_xxx.he5" \
+    "/data/srtm30plus_v11_land.nc" \
+    "/data/dataset_ch4_full.hdf5" \
+    "/data/output_folder" \
+    -k 1 --min_wl 2100 --max_wl 2450
+```
+
+##### Batch mode
+
+```bash
+docker run --rm \
+  -v /host/path/to/acquisitions:/data/in \
+  -v /host/path/to/resources:/data/res \
+  -v /host/path/to/output:/data/out \
+  prisma-ch4-mapper:latest batch \
+    "/data/in" \
+    "/data/res/DEM_1Km/srtm30plus_v11_land.nc" \
+    "/data/res/LUTs/dataset_ch4_full.hdf5" \
+    --output_root "/data/out" \
+    -k 1 --min_wl 2100 --max_wl 2450
+```
+
+---
+
+> **Spectral window options**  
+> You can control the wavelength range with `--min_wl` and `--max_wl` (in nm).  
+> **clustering option**  
+> You can choose to activate the CTMF (cluster tuned matched filter) simply setting the clustering flag `-k` >1.  
+>  
+> **Single mode** requires explicit paths to the extracted `.he5` files.  
+> **Batch mode** will scan subfolders of the input directory for PRISMA L1C/L2C files (zipped or unzipped) and process them in sequence.  
+>  
+
 
 ### 2.3.4 Input Definition
 
