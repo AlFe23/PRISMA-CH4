@@ -17,9 +17,11 @@ The methodology, originally developed for the CLEAR-UP project funded by ASI, le
 
 - A. Ferrari, G. Laneve, V. Pampanoni, A. Carvajal and F. Rossi, "Monitoring Methane Emissions from Landfills Using Prisma Imagery," IGARSS 2024 - 2024 IEEE International Geoscience and Remote Sensing Symposium, Athens, Greece, 2024, pp. 3663-3667, doi: 10.1109/IGARSS53475.2024.10642079.
 
+- Ferrari, A., Laneve, G., Tellez, R.A.C., Pampanoni, V., Saquella, S. and Guarini, R., 2025. Analysis of Local Methane Emissions Using Near-Simultaneous Multi-Satellite Observations: Insights from Landfills and Oil-Gas Facilities. arXiv preprint arXiv:2506.01113.
+
 **Links:**
 
-- [Docker CTMF_v4_6](https://drive.google.com/file/d/197rUulwsnqs67gWljOwPchdRw3-Yu87Y/view?usp=sharing)
+- [Docker prisma-ch4-mapper.tar](https://drive.google.com/file/d/1xFfn2pqW5srqmd0dexAtlwD8hRF18fMS/view?usp=sharing)
 - [LUT CH4](https://drive.google.com/file/d/196adGp_XCcTXAk3SRjiOnBJxUhDANNvn/view?usp=sharing)
 - [DEM](https://drive.google.com/file/d/10e1VtibryVxcHT4-Gb0ryhyk17JCF04f/view?usp=sharing)
 - [PRISMA Sample Images](https://drive.google.com/drive/folders/1IqJE_szLeWtHDRRdjURAl2JIBeQL_9zy?usp=sharing)
@@ -27,22 +29,25 @@ The methodology, originally developed for the CLEAR-UP project funded by ASI, le
 
 ## Index
 
-1. **Algorithm Theoretical Basis**
-   - 1.1 Clutter Matched Filter
-   - 1.2 Concentration Estimation
-   - 1.3 Scene-Specific Target Spectrum Automatic Generation
-   - 1.4 Processing Flow Chart
-   - 1.5 Examples of Automatically Generated Outputs
-2. **User Manual for CTMF v4.6 Docker Container**
-   - 2.1 Provided Files
-   - 2.2 Docker Container Usage
-   - 2.3 Example Docker Run Commands
-     - 2.3.1 WSL2 (Linux Kernel on Windows)
-     - 2.3.2 Windows
-   - 2.4 Input Definition
-   - 2.5 Output Definition
-   - 2.6 Future Updates
+1. **Algorithm Theoretical Basis**  
+   - 1.1 Clutter Matched Filter  
+   - 1.2 Concentration Estimation  
+   - 1.3 Scene-Specific Target Spectrum Automatic Generation  
+   - 1.4 Processing Flow Chart  
+   - 1.5 Examples of Automatically Generated Outputs  
+
+2. **User Manual for prisma-ch4-mapper Docker Container (v2)**  
+   - 2.1 Provided Files  
+   - 2.2 Docker Container Usage  
+   - 2.3 Example Docker Run Commands  
+     - 2.3.1 Using `run_ctmf_prisma.py`  
+     - 2.3.2 Using plain `docker`  
+   - 2.4 Input Definition  
+   - 2.5 Output Definition  
+   - 2.6 Future Updates  
+
 3. **References**
+
 
 ## 1. **Algorithm Theoretical Basis**
 
@@ -157,7 +162,7 @@ Below a figure reporting the processing workflow implemented:
 
 
 
-##  2. **User Manual for CTMF v4.6 Docker Container**
+##  2. **User Manual for `prisma-ch4-mapper` Docker Container**
 
 ### 2.1 Provided Files:
 
