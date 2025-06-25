@@ -4,7 +4,7 @@
 
 This repository contains the code and resources for detecting and quantifying methane (CH<sub>4</sub>) emissions using PRISMA hyperspectral satellite imagery.
 
-The methodology, originally developed for the CLEAR-UP project funded by ASI, leverages the PRISMA Hyperspectral sensor to monitor methane emissions using an enhanced matched filter technique known as the Cluster Tuned Matched Filter (CTMF). This is applied to L1C radiance images. The unit absorption spectrum, obtained using multiple MODTRAN6® simulations, serves as the target in the matched filter, enabling methane detection and quantification. Key steps include utilizing PRISMA L1C radiance images in the 2300 nm short-wave infrared methane absorption window, adapting the matched filter to account for background clutter, and applying clustering for refined background spectrum calculations. Methane concentration is estimated by linearizing the Beer-Lambert absorption law and using the unit absorption spectrum, which represents the unit methane absorption as a function of wavelength. Automation through a lookup table (LUT) based on precomputed radiances for various conditions enables real-time applicability. Results computed over 200 PRISMA acquisitions revealed methane plumes at various sites of interest in countries including Algeria, Argentina, Brazil, China, India, Mexico, Turkmenistan, and the USA. For instance, the Natural Gas compression plant in Kamyshlydzha, Turkmenistan, consistently exhibited methane plumes across all 13 images analyzed. Several large landfills were examined using available PRISMA images or through specific acquisition requests. Evidence of methane concentration enhancement was observed in the Buenos Aires landfill and the Pirana landfill in Ahmedabad.
+The methodology, originally developed for the CLEAR-UP project funded by ASI, leverages the PRISMA Hyperspectral sensor to monitor methane emissions using an enhanced matched filter technique known as the Cluster Tuned Matched Filter (CTMF). This is applied to L1 radiance images. The unit absorption spectrum, obtained using multiple MODTRAN6® simulations, serves as the target in the matched filter, enabling methane detection and quantification. Key steps include utilizing PRISMA L1 radiance images in the 2300 nm short-wave infrared methane absorption window, adapting the matched filter to account for background clutter, and applying clustering for refined background spectrum calculations. Methane concentration is estimated by linearizing the Beer-Lambert absorption law and using the unit absorption spectrum, which represents the unit methane absorption as a function of wavelength. Automation through a lookup table (LUT) based on precomputed radiances for various conditions enables real-time applicability. Results computed over 200 PRISMA acquisitions revealed methane plumes at various sites of interest in countries including Algeria, Argentina, Brazil, China, India, Mexico, Turkmenistan, and the USA. For instance, the Natural Gas compression plant in Kamyshlydzha, Turkmenistan, consistently exhibited methane plumes across all 13 images analyzed. Several large landfills were examined using available PRISMA images or through specific acquisition requests. Evidence of methane concentration enhancement was observed in the Buenos Aires landfill and the Pirana landfill in Ahmedabad.
 
 <div align="center">
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/87a5817e-41c2-4d25-9496-8b8e5d2e71fe" width="20%">
@@ -179,7 +179,7 @@ All files can be found at this link, navigating to the folder `2.Rilevamento CH4
 
 The Docker image (`prisma-ch4-mapper.tar`) now supports two modes of operation:
 
-- **Single mode**: process one acquisition at a time by supplying the paths to the extracted `.he5` L1C and L2C files.  
+- **Single mode**: process one acquisition at a time by supplying the paths to the extracted `.he5` L1 and L2C files.  
 - **Batch mode**: process a directory tree of PRISMA acquisitions (each in its own folder, either zipped or already extracted) in one go.
 
 You can drive the container either via the helper script `run_ctmf_prisma.py` (recommended) or with plain `docker` commands.
@@ -266,13 +266,13 @@ docker run --rm \
 > You can choose to activate the CTMF (cluster tuned matched filter) simply setting the clustering flag `-k` >1.  
 >  
 > **Single mode** requires explicit paths to the extracted `.he5` files.  
-> **Batch mode** will scan subfolders of the input directory for PRISMA L1C/L2C files (zipped or unzipped) and process them in sequence.  
+> **Batch mode** will scan subfolders of the input directory for PRISMA L1 and L2C files (zipped or unzipped) and process them in sequence.  
 >  
 
 
 ### 2.3.4 Input Definition
 
-- **L1C_file:** Path to the PRISMA L1 file in original format *.he5, as extracted from the zip provided by ASI.
+- **L1_file:** Path to the PRISMA L1 file in original format *.he5, as extracted from the zip provided by ASI.
 - **L2C_file:** Path to the PRISMA L2C file in original format *.he5, as extracted from the zip provided by ASI.
 - **dem_file:** Path to the `srtm30plus_v11_land.nc` file, as provided by EOSIAL.
 - **lut_file:** Path to the `dataset_ch4_full.hdf5` file, as provided by EOSIAL.
