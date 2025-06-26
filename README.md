@@ -10,8 +10,9 @@ The methodology, originally developed for the CLEAR-UP project funded by ASI, le
 <img src="https://github.com/AlFe23/PRISMA-CH4/assets/105355911/87a5817e-41c2-4d25-9496-8b8e5d2e71fe" width="20%">
 </div>
 
-**Author:** Alvise Ferrari 
-**Contact:** alvise.ferrari@uniroma1.it, ferrarialvise@gmail.com
+**Authors:** Alvise Ferrari, Giovanni Laneve 
+
+**Contact:** alvise.ferrari@uniroma1.it, ferrarialvise@gmail.com, giovanni.laneve@uniroma1.it
 
 **Citation:**
 
